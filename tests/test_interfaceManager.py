@@ -2,6 +2,7 @@ from unittest import TestCase
 from interfaceManager import InterfaceManager
 from interfaceManager import Interface
 from interfaceManager import InterfaceMethodNotExist
+from interfaceManager import InterfaceNotExist
 
 
 class TestInterface(TestCase):
@@ -10,7 +11,7 @@ class TestInterface(TestCase):
         test_method_args = (lambda x, y: x + y)
 
         methods = {"test_method1": test_method1, "test_method_args": test_method_args}
-        interface = Interface(methods)
+        interface = Interface("test_method1", methods)
 
         have_func = interface.have_method("test_method1")
         self.assertTrue(have_func)
@@ -75,4 +76,8 @@ class TestInterfaceManager(TestCase):
         i = InterfaceManager()
         i.add_interface(interface)
 
-        returned_interface = i.get_interface("test_interface_that_not_exist")
+        try:
+            i.get_interface("test_interface_that_not_exist")
+            self.assertRaises(Exception)
+        except InterfaceNotExist as detail:
+            self.assertEqual(detail.interface_name, "test_interface_that_not_exist")
