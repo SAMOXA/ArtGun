@@ -22,9 +22,19 @@ class InterfaceNotExist(InterfaceError):
         self.existing_interfaces = existing_interfaces
 
 
+class InterfaceAlreadyExist(InterfaceError):
+    interface_name = ""
+    existing_interfaces = {}
+
+    def __init__(self, interface_name, existing_interfaces):
+        self.interface_name = interface_name
+        self.existing_interfaces = existing_interfaces
+
+
 class Interface:
     methods = {}
     name = ""
+    mediator = None
 
     def __init__(self, name, methods):
         self.methods = methods.copy()
@@ -36,21 +46,37 @@ class Interface:
     def call_method(self, method_name, *args):
         if self.have_method(method_name) == False:
             raise InterfaceMethodNotExist(self.name, method_name, self.methods)
-
-        if len(args) == 0:
-            return self.methods[method_name]()
-        else:
-            return self.methods[method_name](*args)
+        event_engine = self.mediator.get_event_engine()
+        return event_engine.call_method(self.name, method_name, *args)
 
     def get_interface_name(self):
         return self.name
+
+    def set_mediator(self, mediator):
+        self.mediator = mediator
+
+    def get_methods_list(self):
+        methods_names = []
+        for method in self.methods:
+            methods_names.append(method)
+
+        return self.methods
 
 
 class InterfaceManager:
     interfaces = {}
 
+    def __init__(self, mediator):
+        self.mediator = mediator
+        print("InterfaceManager created")
+
     def add_interface(self, interface):
+        if interface.get_interface_name() in self.interfaces:
+            raise InterfaceAlreadyExist(interface.get_interface_name(), self.interfaces)
         self.interfaces[interface.get_interface_name()] = interface
+        event_engine = self.mediator.get_event_engine()
+        event_engine.add_interface(interface)
+        interface.set_mediator(self.mediator)
 
     def have_interface(self, interface_name):
         return interface_name in self.interfaces

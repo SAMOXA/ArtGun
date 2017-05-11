@@ -1,8 +1,9 @@
 from unittest import TestCase
 from interfaceManager import InterfaceManager
 from interfaceManager import Interface
-from interfaceManager import InterfaceMethodNotExist
 from interfaceManager import InterfaceNotExist
+from interfaceManager import InterfaceAlreadyExist
+from appMediator import AppMediator
 
 
 class TestInterface(TestCase):
@@ -19,26 +20,29 @@ class TestInterface(TestCase):
         have_func = interface.have_method("there_is_no_method")
         self.assertFalse(have_func)
 
-        result = interface.call_method("test_method1")
-        self.assertEqual(result, "test_method1")
-
-        result = interface.call_method("test_method_args", 2, 2)
-        self.assertEqual(result, 4)
-
-    def test_error_input(self):
-        test_method1 = lambda: "test_method1"
-        test_method_args = (lambda x, y: x + y)
-
-        methods = {"test_method1": test_method1, "test_method_args": test_method_args}
+    def test_get_name(self):
+        methods = {}
         interface = Interface("test_interface", methods)
 
-        #Run not existing function
-        try:
-            interface.call_method("test_method_not_exist")
-            self.assertRaises(Exception)
-        except InterfaceMethodNotExist as detail:
-            self.assertEqual(detail.interface_name, "test_interface")
-            self.assertEqual(detail.method_name, "test_method_not_exist")
+        name = interface.get_interface_name()
+        self.assertEqual(name, "test_interface")
+
+    def test_get_methods_list(self):
+        test_method1 = lambda: "test_method1"
+        test_method_args = (lambda x, y: x + y)
+        methods = {"test_interface": test_method1, "test_method_args": test_method_args}
+        interface = Interface("test_interface", methods)
+
+        list = interface.get_methods_list()
+        self.assertEqual(list, methods)
+
+    def test_interface_without_methods(self):
+        methods = {}
+        interface = Interface("test_interface", methods)
+
+        list = interface.get_methods_list()
+        self.assertEqual(list, methods)
+
 
 class TestInterfaceManager(TestCase):
     def test_interface_manager_base(self):
@@ -48,7 +52,9 @@ class TestInterfaceManager(TestCase):
         methods = {"test_method1": test_method1, "test_method_args": test_method_args}
         interface = Interface("test_interface", methods)
 
-        i = InterfaceManager()
+        mediator = AppMediator()
+
+        i = InterfaceManager(mediator)
         i.add_interface(interface)
 
         have_interface = i.have_interface("test_interface")
@@ -73,7 +79,9 @@ class TestInterfaceManager(TestCase):
         methods = {"test_method1": test_method1, "test_method_args": test_method_args}
         interface = Interface("test_interface", methods)
 
-        i = InterfaceManager()
+        mediator = AppMediator()
+
+        i = InterfaceManager(mediator)
         i.add_interface(interface)
 
         try:
@@ -81,3 +89,20 @@ class TestInterfaceManager(TestCase):
             self.assertRaises(Exception)
         except InterfaceNotExist as detail:
             self.assertEqual(detail.interface_name, "test_interface_that_not_exist")
+
+    def test_interface_with_same_name(self):
+        test_method1 = lambda: "test_method1"
+        methods = {"test_interface": test_method1}
+
+        interface = Interface("test_interface", methods)
+        interface1 = Interface("test_interface", methods)
+
+        mediator = AppMediator()
+
+        i = InterfaceManager(mediator)
+        i.add_interface(interface)
+        try:
+            i.add_interface(interface1)
+            self.assertRaises(Exception)
+        except InterfaceAlreadyExist as detail:
+            self.assertEqual(detail.interface_name, "test_interface")
