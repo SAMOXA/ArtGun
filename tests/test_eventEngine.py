@@ -3,6 +3,8 @@ from appMediator import AppMediator
 from interfaceManager import Interface
 from pluginManager import Plugin
 from interfaceManager import InterfaceMethodNotExist
+from interfaceManager import InterfaceMediatorNotSet
+from interfaceManager import InterfaceNotExist
 
 
 class TestEventEngineBase(TestCase):
@@ -35,3 +37,21 @@ class TestEventEngineBase(TestCase):
         except InterfaceMethodNotExist as detail:
             self.assertEqual(detail.interface_name, "test_interface")
             self.assertEqual(detail.method_name, "test_method_not_exist")
+
+    def test_event_engine_interface_not_exist(self):
+        mediator = AppMediator()
+
+        methods = ["test_method1", "test_method_args"]
+        interface = Interface("test_interface", methods)
+
+        try:
+            interface.call_method("test_method1")
+        except InterfaceMediatorNotSet as detail:
+            self.assertEqual(detail.interface_name, "test_interface")
+
+        interface.set_mediator(mediator)
+
+        try:
+            interface.call_method("test_method1")
+        except InterfaceNotExist as detail:
+            self.assertEqual(detail.interface_name, "test_interface")

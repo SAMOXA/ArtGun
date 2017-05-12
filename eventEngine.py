@@ -1,5 +1,4 @@
-from interfaceManager import InterfaceManager
-from interfaceManager import Interface
+from interfaceManager import InterfaceNotExist
 
 
 class EventEngine:
@@ -16,11 +15,19 @@ class EventEngine:
             self.bindings[interface.get_interface_name()][method] = {}
 
     def add_plugin(self, plugin_name, bindings):
+        interface_manager = self.mediator.get_interface_manager()
         for interface in bindings:
+            if interface_manager.have_interface(interface) == False:
+                raise InterfaceNotExist(interface, interface_manager.get_interface_list())
+
             for method in bindings[interface]:
                 self.bindings[interface][method][plugin_name] = bindings[interface][method]
 
     def call_method(self, interface_name, method_name, *args):
+        interface_manager = self.mediator.get_interface_manager()
+        if interface_manager.have_interface(interface_name) == False:
+            raise InterfaceNotExist(interface_name, interface_manager.get_interface_list())
+
         for plugin in self.bindings[interface_name][method_name]:
             if len(args) == 0:
                 return self.bindings[interface_name][method_name][plugin]()

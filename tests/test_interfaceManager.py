@@ -1,5 +1,4 @@
 from unittest import TestCase
-from interfaceManager import InterfaceManager
 from interfaceManager import Interface
 from interfaceManager import InterfaceNotExist
 from interfaceManager import InterfaceAlreadyExist
@@ -8,10 +7,7 @@ from appMediator import AppMediator
 
 class TestInterface(TestCase):
     def test_interface_base(self):
-        test_method1 = lambda: "test_method1"
-        test_method_args = (lambda x, y: x + y)
-
-        methods = {"test_method1": test_method1, "test_method_args": test_method_args}
+        methods = ["test_method1", "test_method_args"]
         interface = Interface("test_method1", methods)
 
         have_func = interface.have_method("test_method1")
@@ -21,16 +17,14 @@ class TestInterface(TestCase):
         self.assertFalse(have_func)
 
     def test_get_name(self):
-        methods = {}
+        methods = []
         interface = Interface("test_interface", methods)
 
         name = interface.get_interface_name()
         self.assertEqual(name, "test_interface")
 
     def test_get_methods_list(self):
-        test_method1 = lambda: "test_method1"
-        test_method_args = (lambda x, y: x + y)
-        methods = {"test_interface": test_method1, "test_method_args": test_method_args}
+        methods = ["test_interface", "test_method_args"]
         interface = Interface("test_interface", methods)
 
         list = interface.get_methods_list()
@@ -46,10 +40,7 @@ class TestInterface(TestCase):
 
 class TestInterfaceManager(TestCase):
     def test_interface_manager_base(self):
-        test_method1 = lambda: "test_method1"
-        test_method_args = (lambda x, y: x + y)
-
-        methods = {"test_method1": test_method1, "test_method_args": test_method_args}
+        methods = ["test_method1", "test_method_args"]
         interface = Interface("test_interface", methods)
 
         mediator = AppMediator()
@@ -73,10 +64,7 @@ class TestInterfaceManager(TestCase):
         self.assertEqual(returned_interface, interface)
 
     def test_error_input(self):
-        test_method1 = lambda: "test_method1"
-        test_method_args = (lambda x, y: x + y)
-
-        methods = {"test_method1": test_method1, "test_method_args": test_method_args}
+        methods = ["test_method1", "test_method_args"]
         interface = Interface("test_interface", methods)
 
         mediator = AppMediator()
@@ -91,8 +79,7 @@ class TestInterfaceManager(TestCase):
             self.assertEqual(detail.interface_name, "test_interface_that_not_exist")
 
     def test_interface_with_same_name(self):
-        test_method1 = lambda: "test_method1"
-        methods = {"test_interface": test_method1}
+        methods = ["test_interface"]
 
         interface = Interface("test_interface", methods)
         interface1 = Interface("test_interface", methods)
@@ -106,3 +93,17 @@ class TestInterfaceManager(TestCase):
             self.assertRaises(Exception)
         except InterfaceAlreadyExist as detail:
             self.assertEqual(detail.interface_name, "test_interface")
+
+    def test_get_interface_list(self):
+        methods = ["test_interface"]
+
+        interface = Interface("test_interface1", methods)
+        interface1 = Interface("test_interface2", methods)
+        mediator = AppMediator()
+
+        i = mediator.get_interface_manager()
+        i.add_interface(interface)
+        i.add_interface(interface1)
+
+        list = i.get_interface_list()
+        self.assertEqual(list.sort(), ["test_interface1", "test_interface2"].sort())

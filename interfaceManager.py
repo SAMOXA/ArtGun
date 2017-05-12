@@ -31,6 +31,13 @@ class InterfaceAlreadyExist(InterfaceError):
         self.existing_interfaces = existing_interfaces
 
 
+class InterfaceMediatorNotSet(InterfaceError):
+    interface_name = ""
+
+    def __init__(self, interface_name):
+        self.interface_name = interface_name
+
+
 class Interface:
     methods = {}
     name = ""
@@ -47,6 +54,9 @@ class Interface:
     def call_method(self, method_name, *args):
         if self.have_method(method_name) == False:
             raise InterfaceMethodNotExist(self.name, method_name, self.methods)
+        if self.mediator == None:
+            raise InterfaceMediatorNotSet(self.name)
+
         event_engine = self.mediator.get_event_engine()
         return event_engine.call_method(self.name, method_name, *args)
 
@@ -91,3 +101,10 @@ class InterfaceManager:
             raise InterfaceNotExist(interface_name, self.interfaces)
 
         return self.interfaces[interface_name]
+
+    def get_interface_list(self):
+        list = []
+        for interface in self.interfaces:
+            list.append(interface)
+
+        return list
