@@ -20,6 +20,7 @@ class PluginManager:
 
     def __init__(self, mediator):
         self.mediator = mediator
+        self.plugins = {}
         print("Plugin manager created")
 
     def register_plugin(self, plugin):

@@ -54,7 +54,7 @@ class TestInterfaceManager(TestCase):
 
         mediator = AppMediator()
 
-        i = InterfaceManager(mediator)
+        i = mediator.get_interface_manager()
         i.add_interface(interface)
 
         have_interface = i.have_interface("test_interface")
@@ -81,7 +81,7 @@ class TestInterfaceManager(TestCase):
 
         mediator = AppMediator()
 
-        i = InterfaceManager(mediator)
+        i = mediator.get_interface_manager()
         i.add_interface(interface)
 
         try:
@@ -99,7 +99,7 @@ class TestInterfaceManager(TestCase):
 
         mediator = AppMediator()
 
-        i = InterfaceManager(mediator)
+        i = mediator.get_interface_manager()
         i.add_interface(interface)
         try:
             i.add_interface(interface1)

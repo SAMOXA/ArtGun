@@ -39,6 +39,7 @@ class Interface:
     def __init__(self, name, methods):
         self.methods = methods.copy()
         self.name = name
+        self.mediator = None
 
     def have_method(self, method_name):
         return method_name in self.methods
@@ -68,6 +69,7 @@ class InterfaceManager:
 
     def __init__(self, mediator):
         self.mediator = mediator
+        self.interfaces = {}
         print("InterfaceManager created")
 
     def add_interface(self, interface):

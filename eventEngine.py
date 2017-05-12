@@ -7,6 +7,7 @@ class EventEngine:
 
     def __init__(self, mediator):
         self.mediator = mediator
+        self.bindings = {}
         print("EventEngine created")
 
     def add_interface(self, interface):
