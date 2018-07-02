@@ -39,7 +39,7 @@ class InterfaceMediatorNotSet(InterfaceError):
 
 
 class Interface:
-    methods = {}
+    methods = set()
     name = ""
     mediator = None
 
@@ -52,9 +52,9 @@ class Interface:
         return method_name in self.methods
 
     def call_method(self, method_name, *args):
-        if self.have_method(method_name) == False:
+        if self.have_method(method_name) is False:
             raise InterfaceMethodNotExist(self.name, method_name, self.methods)
-        if self.mediator == None:
+        if self.mediator is None:
             raise InterfaceMediatorNotSet(self.name)
 
         event_engine = self.mediator.get_event_engine()
@@ -97,7 +97,7 @@ class InterfaceManager:
         return self.interfaces[interface_name].have_method(method_name)
 
     def get_interface(self, interface_name):
-        if self.have_interface(interface_name) == False:
+        if self.have_interface(interface_name) is False:
             raise InterfaceNotExist(interface_name, self.interfaces)
 
         return self.interfaces[interface_name]

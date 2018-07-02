@@ -17,7 +17,7 @@ class EventEngine:
     def add_plugin(self, plugin_name, bindings):
         interface_manager = self.mediator.get_interface_manager()
         for interface in bindings:
-            if interface_manager.have_interface(interface) == False:
+            if interface_manager.have_interface(interface) is False:
                 raise InterfaceNotExist(interface, interface_manager.get_interface_list())
 
             for method in bindings[interface]:
@@ -25,7 +25,7 @@ class EventEngine:
 
     def call_method(self, interface_name, method_name, *args):
         interface_manager = self.mediator.get_interface_manager()
-        if interface_manager.have_interface(interface_name) == False:
+        if interface_manager.have_interface(interface_name) is False:
             raise InterfaceNotExist(interface_name, interface_manager.get_interface_list())
 
         for plugin in self.bindings[interface_name][method_name]:
