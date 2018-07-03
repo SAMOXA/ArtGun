@@ -51,14 +51,14 @@ class Interface:
     def have_method(self, method_name):
         return method_name in self.methods
 
-    def call_method(self, method_name, *args):
+    def call_method(self, method_name, msg):
         if self.have_method(method_name) is False:
             raise InterfaceMethodNotExist(self.name, method_name, self.methods)
         if self.mediator is None:
             raise InterfaceMediatorNotSet(self.name)
 
         event_engine = self.mediator.get_event_engine()
-        return event_engine.call_method(self.name, method_name, *args)
+        return event_engine.call_method(self.name, method_name, msg)
 
     def get_interface_name(self):
         return self.name
@@ -80,7 +80,6 @@ class InterfaceManager:
     def __init__(self, mediator):
         self.mediator = mediator
         self.interfaces = {}
-        print("InterfaceManager created")
 
     def add_interface(self, interface):
         if interface.get_interface_name() in self.interfaces:

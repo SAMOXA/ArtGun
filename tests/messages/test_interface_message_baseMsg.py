@@ -5,7 +5,7 @@ from interfaces.messages.baseMsg import BaseMsgFieldNotExist
 
 class TestLibThreadedQueueWorker(TestCase):
     def test_interface_msg_baseMsg_simple(self):
-        msg = BaseMsg('1', '2', 100)
+        msg = BaseMsg("BaseMsg", '1', '2', 100)
 
         result = msg.get_field('source')
         self.assertEqual(result, '1')
@@ -17,7 +17,7 @@ class TestLibThreadedQueueWorker(TestCase):
         self.assertEqual(result, '0.1')
 
     def test_interface_msg_baseMsg_field_not_exist(self):
-        msg = BaseMsg('1', '2', 100)
+        msg = BaseMsg("BaseMsg", '1', '2', 100)
 
         try:
             msg.get_field('field_not_exist')

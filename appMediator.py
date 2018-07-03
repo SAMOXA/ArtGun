@@ -8,7 +8,6 @@ class AppMediator:
         self.interfaseManager = InterfaceManager(self)
         self.pluginManager = PluginManager(self)
         self.eventEngine = EventEngine(self)
-        print("Mediator created")
 
     def get_interface_manager(self):
         return self.interfaseManager
