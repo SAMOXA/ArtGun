@@ -38,15 +38,13 @@ class InterfaceMediatorNotSet(InterfaceError):
         self.interface_name = interface_name
 
 
-class Interface:
-    methods = set()
-    name = ""
-    mediator = None
+class BaseInterface:
 
     def __init__(self, name, methods):
         self.methods = methods.copy()
         self.name = name
         self.mediator = None
+        self.msg_prototypes = dict()
 
     def have_method(self, method_name):
         return method_name in self.methods

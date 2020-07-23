@@ -1,6 +1,6 @@
 from unittest import TestCase
 from appMediator import AppMediator
-from interfaceManager import Interface
+from interfaceManager import BaseInterface
 from pluginManager import Plugin
 from interfaceManager import InterfaceMethodNotExist
 from interfaceManager import InterfaceMediatorNotSet
@@ -15,7 +15,7 @@ class TestEventEngineBase(TestCase):
         test_method_args = (lambda x, y: x + y)
 
         methods = ["test_method1", "test_method_args"]
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         bindings = {"test_interface": {"test_method1": test_method1, "test_method_args": test_method_args} }
         plugin = Plugin("test_plugin", bindings)
@@ -42,7 +42,7 @@ class TestEventEngineBase(TestCase):
         mediator = AppMediator()
 
         methods = ["test_method1", "test_method_args"]
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         try:
             interface.call_method("test_method1")

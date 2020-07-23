@@ -1,5 +1,5 @@
 from unittest import TestCase
-from interfaceManager import Interface
+from interfaceManager import BaseInterface
 from interfaceManager import InterfaceNotExist
 from interfaceManager import InterfaceAlreadyExist
 from appMediator import AppMediator
@@ -8,7 +8,7 @@ from appMediator import AppMediator
 class TestInterface(TestCase):
     def test_interface_base(self):
         methods = ["test_method1", "test_method_args"]
-        interface = Interface("test_method1", methods)
+        interface = BaseInterface("test_method1", methods)
 
         have_func = interface.have_method("test_method1")
         self.assertTrue(have_func)
@@ -18,21 +18,21 @@ class TestInterface(TestCase):
 
     def test_get_name(self):
         methods = []
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         name = interface.get_interface_name()
         self.assertEqual(name, "test_interface")
 
     def test_get_methods_list(self):
         methods = ["test_interface", "test_method_args"]
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         list = interface.get_methods_list()
         self.assertEqual(list, methods)
 
     def test_interface_without_methods(self):
         methods = {}
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         list = interface.get_methods_list()
         self.assertEqual(list, methods)
@@ -41,7 +41,7 @@ class TestInterface(TestCase):
 class TestInterfaceManager(TestCase):
     def test_interface_manager_base(self):
         methods = ["test_method1", "test_method_args"]
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         mediator = AppMediator()
 
@@ -65,7 +65,7 @@ class TestInterfaceManager(TestCase):
 
     def test_error_input(self):
         methods = ["test_method1", "test_method_args"]
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         mediator = AppMediator()
 
@@ -81,8 +81,8 @@ class TestInterfaceManager(TestCase):
     def test_interface_with_same_name(self):
         methods = ["test_interface"]
 
-        interface = Interface("test_interface", methods)
-        interface1 = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
+        interface1 = BaseInterface("test_interface", methods)
 
         mediator = AppMediator()
 
@@ -97,8 +97,8 @@ class TestInterfaceManager(TestCase):
     def test_get_interface_list(self):
         methods = ["test_interface"]
 
-        interface = Interface("test_interface1", methods)
-        interface1 = Interface("test_interface2", methods)
+        interface = BaseInterface("test_interface1", methods)
+        interface1 = BaseInterface("test_interface2", methods)
         mediator = AppMediator()
 
         i = mediator.get_interface_manager()

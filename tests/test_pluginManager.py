@@ -2,7 +2,7 @@ from unittest import TestCase
 from appMediator import AppMediator
 from pluginManager import Plugin
 from pluginManager import PluginAlreadyExist
-from interfaceManager import Interface
+from interfaceManager import BaseInterface
 from interfaces.messages.baseMsg import BaseMsg
 
 
@@ -34,27 +34,51 @@ class TestPluginManager(TestCase):
         test_method1 = lambda: "test_method1"
         test_method_args = (lambda x, y: x + y)
         test_method_revers = (lambda a, b, c: str(a) + str(b) + str(c))
+        test_one_way_method_output = ''
+        def test_one_way_method(arg1):
+            global test_one_way_method_output
+            test_method_revers_output = str(arg1) + 'pass'
 
         methods = {
             "test_method1": 'TestMessage',
             "test_method_args": 'TestMessageTwoFields',
             "test_method_reverse_args": 'TestMessageTwoFields'
         }
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
+
+        test_method_revers_output = ''
+        test_method_args_output = 0
+
+        def test_method_args_callback(result):
+            global test_method_args_output
+            test_method_args_output = result + 2
+
+        def test_method_revers_callback(result, test2):
+            global test_method_revers_output
+            test_method_revers_output = result + test2
+
+        #Test no return
+        #Test no return callback
+        #Test return
+        #Test return callback
 
         bindings = {
             "test_interface": {
                 "test_method1": {
                     'fn': test_method1,
-                    'bindings': []
+                    'bindings': [],
                 },
                 "test_method_args": {
                     'fn': test_method_args,
-                    'bindings': ['test1', 'test2']
+                    'bindings': ['test1', 'test2'],
+                    'callback': test_method_args_callback,
+                    'callback_bindings': ['result']
                 },
                 "test_method_reverse_args": {
                     'fn': test_method_revers,
-                    'bindings': ['test3', 'test2', 'test1']
+                    'bindings': ['test3', 'test2', 'test1'],
+                    'callback': test_method_revers_callback,
+                    'callback_bindings': ['result', 'test2']
                 }
             }
         }
@@ -88,7 +112,7 @@ class TestPluginManager(TestCase):
             "test_method1": 'TestMessage',
             "test_method_args": 'TestMessageTwoFields'
         }
-        interface = Interface("test_interface", methods)
+        interface = BaseInterface("test_interface", methods)
 
         bindings = {
             "test_interface": {
